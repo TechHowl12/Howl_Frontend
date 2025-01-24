@@ -52,7 +52,7 @@ const Relation = () => {
   return (
     <div className="bg-slate-100 h-[100vh] overflow-hidden py-20 px-8">
       <h1 className="text-4xl text-center mb-6 mt-2 font-bold uppercase">
-        Performance
+        Performance <span className="capitalize text-xl">under development</span>
       </h1>
       <div className="flex flex-col xl:flex-row">
         <div className="xl:border-r-2 w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 max-sm:gap-7 items-center xl:w-1/3 h-full border-slate-700">
@@ -207,7 +207,7 @@ const Relation = () => {
               <h1 className="text-center text-3xl">Age Model</h1>
               <div className="flex mt-5">
               {contentData.map((item, index) => (
-              <div className="bg-slate-300 rounded-lg shadow-md hover:scale-125 px-6 py-3 mx-5" key={index}>
+              <div className="bg-slate-300 rounded-lg shadow-md hover:scale-125 transition-all px-6 py-3 mx-5" key={index}>
                   <h1 className="text-2xl font-bold">{item}</h1>
               </div>
             ))}

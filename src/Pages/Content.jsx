@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import {
   ClimbingBoxLoader,
   ClipLoader,
-  PacmanLoader,
 } from "react-spinners";
 import ReactMarkdown from 'react-markdown';
+import { Document, Packer, Paragraph } from "docx";
+import { saveAs } from "file-saver";
 
 const Content = () => {
   const [file, setFile] = useState(null);
@@ -76,6 +77,26 @@ const Content = () => {
     if (selectedFile) {
       setFile(selectedFile);
     }
+  };
+
+  const downloadAsDocx = () => {
+    const doc = new Document({
+      sections: [
+        {
+          properties: {},
+          children: [
+            new Paragraph({
+              text: contentData,
+              style: "Normal",
+            }),
+          ],
+        },
+      ],
+    });
+
+    Packer.toBlob(doc).then((blob) => {
+      saveAs(blob, "ContentData.docx");
+    });
   };
 
   return (
@@ -261,7 +282,16 @@ const Content = () => {
           {loading ? (
             <ClimbingBoxLoader size={40} color="#5d5d5d" />
           ) : contentData ? (
-            <ReactMarkdown children={contentData} className="leading-10" />
+            <div>
+              <button
+                onClick={downloadAsDocx}
+                className="mt-4 rounded-md flex justify-center ml-auto bg-blue-500 py-2 px-4 border border-transparent text-center text-sm text-white transition-all hover:bg-blue-600"
+              >
+                Download
+              </button>
+              <ReactMarkdown children={contentData} className="leading-10" />
+            </div>
+                      
           ) : (
             <h1 className="text-xl font-bold">Fill up all the fields</h1>
           )}
