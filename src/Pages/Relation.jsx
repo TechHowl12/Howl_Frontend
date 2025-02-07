@@ -38,7 +38,7 @@ const Relation = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "https://howl-performance.onrender.com/performance",
+        "https://howl-performanceapi.onrender.com/performance",
         formData
       );
       setContentData(response.data.age_model);
@@ -190,9 +190,9 @@ const Relation = () => {
             className="rounded-md w-32 bg-slate-800 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none mt-6"
             onClick={handleSubmit}
             disabled={
-              !formData.age_group || 
-              !formData.region || 
-              !formData.month || 
+              !formData.age_group ||
+              !formData.region ||
+              !formData.month ||
               !formData.amount_spent
             }
           >
@@ -204,13 +204,17 @@ const Relation = () => {
             <ClimbingBoxLoader size={40} color="#5d5d5d" />
           ) : contentData ? (
             <div>
-              <h1 className="text-center text-3xl">Age Model</h1>
               <div className="flex mt-5">
-              {contentData.map((item, index) => (
-              <div className="bg-slate-300 rounded-lg shadow-md hover:scale-125 transition-all px-6 py-3 mx-5" key={index}>
-                  <h1 className="text-2xl font-bold">{item}</h1>
-              </div>
-            ))}
+                {contentData.map((item, index) => (
+                  <>
+                    <div>
+                      <h1 className="text-2xl font-bold">{index === 1 ? "Impressions:" : "Reach:"}</h1>
+                    </div>
+                    <div className="bg-slate-300 rounded-lg shadow-md hover:scale-125 transition-all px-6 py-3 mx-5" key={index}>
+                      <h1 className="text-2xl font-bold">{item}</h1>
+                    </div>
+                  </>
+                ))}
               </div>
             </div>
           ) : (

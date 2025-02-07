@@ -56,7 +56,7 @@ const Content = () => {
 
       // Sending everything as JSON to your server endpoint
       const response = await axios.post(
-        "https://howl-performance.onrender.com/content",
+        "https://howl-performanceapi.onrender.com/content",
         completeData,
         {
           headers: {
@@ -291,7 +291,7 @@ const Content = () => {
               </button>
               <ReactMarkdown children={contentData} className="leading-10" />
             </div>
-                      
+
           ) : (
             <h1 className="text-xl font-bold">Fill up all the fields</h1>
           )}
