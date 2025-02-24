@@ -5,3 +5,23 @@ body{
   --tw-bg-opacity: 1;
     background-color: rgb(241 245 249 / var(--tw-bg-opacity, 1)) 
 }
+
+.content-display {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.content-item {
+  margin-bottom: 10px;
+}
+
+.content-item strong {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.content-item span {
+  color: #333;
+}

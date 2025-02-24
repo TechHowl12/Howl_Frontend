@@ -3,6 +3,7 @@ import './App.css';
 import Navbar from './Components/Navbar';
 import Content from './Pages/Content';
 import Relation from './Pages/Relation';
+import Feedback from './Pages/Feedback';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
            <Routes>
              <Route path="/" element={<Content/>} />
              <Route path="/relation" element={<Relation/>} />
+              <Route path="/feedback999" element={<Feedback/>} />
            </Routes>
          </Router>
     </div>
