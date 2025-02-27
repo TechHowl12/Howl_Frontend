@@ -9,7 +9,7 @@ const Content = () => {
   const [state, setState] = useState({
     loading: false,
     contentData: null,
-    contentType: null, // Track image or video
+    contentType: null,
   });
 
   const [formData, setFormData] = useState({
@@ -140,7 +140,9 @@ const Content = () => {
                     spacing: { after: 100 },
                   }),
                   new Paragraph({
-                    text: state.contentData.description_suggestions?.reasoning || state.contentData.description_improvements?.reasoning,
+                    text:
+                      state.contentData.description_suggestions?.reasoning ||
+                      state.contentData.description_improvements?.reasoning,
                     spacing: { after: 400 },
                   }),
                 ]
@@ -191,7 +193,7 @@ const Content = () => {
               : improvements.image_feedback || improvements.suggestion || improvements.improvement
               ? [
                   new Paragraph({
-                    text: `- ${improvements.image_feedback || improvements.element ? `${improvements.element || "Image"}: ${improvements.suggestion}` : improvements.suggestion || improvements.improvement || "No suggestion"}`,
+                    text: `- ${improvements.image_feedback || (improvements.element ? `${improvements.element}: ${improvements.suggestion}` : improvements.suggestion || improvements.improvement || "No suggestion")}`,
                     spacing: { after: 100 },
                   }),
                   ...(improvements.reasoning
@@ -254,14 +256,23 @@ const Content = () => {
     });
   };
 
-  console.log("Rendering with state:", state);
-  console.log("post_improvement_suggestions:", state.contentData?.post_improvement_suggestions);
+  console.log("Pre-render state:", state);
+  if (state.contentData) {
+    console.log("Description Suggestions:", {
+      suggested: state.contentData.description_suggestions?.suggested_description,
+      revised: state.contentData.description_suggestions?.revised_description,
+      improvements: state.contentData.description_improvements?.suggested_description,
+      raw: state.contentData.description_suggestions,
+    });
+    console.log("Hashtag Suggestions:", state.contentData.hashtag_suggestions?.suggested_hashtags || state.contentData.hashtag_suggestions || state.contentData.hashtags);
+    console.log("Improvement Suggestions:", state.contentData.post_improvement_suggestions || state.contentData.post_improvements);
+    console.log("Score:", state.contentData.score);
+    console.log("Overall Feedback:", state.contentData.overall_feedback);
+  }
 
   return (
     <div className="bg-slate-100 py-20 px-4 sm:px-8">
-      <h1 className="text-4xl text-center mb-6 mt-2 uppercase font-bold text-slate-700">
-        Content
-      </h1>
+      <h1 className="text-4xl text-center mb-6 mt-2 uppercase font-bold text-slate-700">Content</h1>
       <div className="flex flex-col xl:flex-row">
         <div className="xl:border-r-2 w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 max-sm:gap-7 items-center xl:w-1/3 h-full border-slate-700">
           <input
@@ -270,7 +281,6 @@ const Content = () => {
             accept="image/*,video/*"
             className="block w-full text-gray-500 font-medium text-sm bg-gray-100 file:cursor-pointer cursor-pointer file:border-0 file:py-2 file:px-4 file:mr-4 file:bg-gray-800 file:hover:bg-gray-700 file:text-slate-100 file:rounded mt-4"
           />
-
           <div className="w-full max-w-sm min-w-[200px] relative mt-4">
             <label className="block mb-2 text-sm text-slate-600">Brand</label>
             <div className="relative">
