@@ -119,20 +119,24 @@ const Content = () => {
             }),
             new Paragraph({
               text:
-                (typeof state.contentData.description_suggestions === "object"
-                  ? state.contentData.description_suggestions.suggested_description
-                  : state.contentData.description_suggestions) || "No description provided",
+                (state.contentData.description_suggestions?.suggested_description ||
+                  state.contentData.description_suggestions?.revised_description ||
+                  state.contentData.description_improvements?.suggested_description ||
+                  state.contentData.description_suggestions) ||
+                "No description provided",
               spacing: { after: 200 },
             }),
-            ...(typeof state.contentData.description_suggestions === "object" &&
-            state.contentData.description_suggestions.reasoning
+            ...(state.contentData.description_suggestions?.reasoning ||
+            state.contentData.description_improvements?.reasoning
               ? [
                   new Paragraph({
                     children: [new TextRun({ text: "Reasoning:", bold: true })],
                     spacing: { after: 100 },
                   }),
                   new Paragraph({
-                    text: state.contentData.description_suggestions.reasoning,
+                    text:
+                      state.contentData.description_suggestions?.reasoning ||
+                      state.contentData.description_improvements?.reasoning,
                     spacing: { after: 400 },
                   }),
                 ]
@@ -143,14 +147,13 @@ const Content = () => {
             }),
             new Paragraph({
               text:
-                (typeof state.contentData.hashtag_suggestions === "object"
-                  ? state.contentData.hashtag_suggestions.suggested_hashtags?.join(", ")
-                  : state.contentData.hashtag_suggestions?.join(", ") ||
-                    state.contentData.hashtags?.join(", ")) || "No hashtags provided",
+                (state.contentData.hashtag_suggestions?.suggested_hashtags?.join(", ") ||
+                  state.contentData.hashtag_suggestions?.join(", ") ||
+                  state.contentData.hashtags?.join(", ")) ||
+                "No hashtags provided",
               spacing: { after: 200 },
             }),
-            ...(typeof state.contentData.hashtag_suggestions === "object" &&
-            state.contentData.hashtag_suggestions.reasoning
+            ...(state.contentData.hashtag_suggestions?.reasoning
               ? [
                   new Paragraph({
                     children: [new TextRun({ text: "Reasoning:", bold: true })],
@@ -166,10 +169,11 @@ const Content = () => {
               children: [new TextRun({ text: "Post Improvement Suggestions", bold: true, size: 28 })],
               spacing: { after: 200 },
             }),
-            ...(Array.isArray(state.contentData.post_improvement_suggestions)
-              ? state.contentData.post_improvement_suggestions.map((item) => [
+            ...(state.contentData.post_improvement_suggestions?.suggestions &&
+            Array.isArray(state.contentData.post_improvement_suggestions.suggestions)
+              ? state.contentData.post_improvement_suggestions.suggestions.map((item) => [
                   new Paragraph({
-                    text: `- ${item.improvement}`,
+                    text: `- ${item.suggestion || item.improvement || "No suggestion"}`,
                     spacing: { after: 100 },
                   }),
                   ...(item.reasoning
@@ -181,56 +185,47 @@ const Content = () => {
                       ]
                     : []),
                 ]).flat()
-              : typeof state.contentData.post_improvement_suggestions === "object" &&
-                state.contentData.post_improvement_suggestions.suggestions
-              ? state.contentData.post_improvement_suggestions.suggestions.map((suggestion) => [
+              : Array.isArray(state.contentData.post_improvement_suggestions)
+              ? state.contentData.post_improvement_suggestions.map((item) => [
                   new Paragraph({
-                    text: `- ${suggestion}`,
-                    spacing: { after: 200 },
-                  }),
-                ]).flat()
-              : state.contentData.post_improvements
-              ? [
-                  new Paragraph({
-                    text: `- ${state.contentData.post_improvements}`,
-                    spacing: { after: 200 },
-                  }),
-                ]
-              : state.contentData.post_improvement_suggestions
-              ? [
-                  new Paragraph({
-                    text: `- ${state.contentData.post_improvement_suggestions}`,
-                    spacing: { after: 200 },
-                  }),
-                ]
-              : [new Paragraph({ text: "No suggestions provided", spacing: { after: 200 } })]),
-            ...(typeof state.contentData.post_improvement_suggestions === "object" &&
-            state.contentData.post_improvement_suggestions.reasoning &&
-            !Array.isArray(state.contentData.post_improvement_suggestions)
-              ? [
-                  new Paragraph({
-                    children: [new TextRun({ text: "Reasoning:", bold: true })],
+                    text: `- ${item.improvement || item.suggestion || "No suggestion"}`,
                     spacing: { after: 100 },
                   }),
+                  ...(item.reasoning
+                    ? [
+                        new Paragraph({
+                          text: `Reasoning: ${item.reasoning}`,
+                          spacing: { after: 200 },
+                        }),
+                      ]
+                    : []),
+                ]).flat()
+              : state.contentData.post_improvements?.image_feedback ||
+                state.contentData.post_improvements
+              ? [
                   new Paragraph({
-                    text: state.contentData.post_improvement_suggestions.reasoning,
-                    spacing: { after: 400 },
+                    text: `- ${state.contentData.post_improvements.image_feedback || state.contentData.post_improvements}`,
+                    spacing: { after: 100 },
                   }),
+                  ...(state.contentData.post_improvements.reasoning
+                    ? [
+                        new Paragraph({
+                          text: `Reasoning: ${state.contentData.post_improvements.reasoning}`,
+                          spacing: { after: 200 },
+                        }),
+                      ]
+                    : []),
                 ]
-              : []),
+              : new Paragraph({ text: "No suggestions provided", spacing: { after: 200 } })),
             new Paragraph({
               children: [new TextRun({ text: "Score", bold: true, size: 28 })],
               spacing: { after: 200 },
             }),
             new Paragraph({
-              text: `${
-                (typeof state.contentData.score === "object"
-                  ? state.contentData.score.value
-                  : state.contentData.score) || "N/A"
-              } / 100`,
+              text: `${state.contentData.score?.value || state.contentData.score || "N/A"} / 100`,
               spacing: { after: 200 },
             }),
-            ...(typeof state.contentData.score === "object" && state.contentData.score.reasoning
+            ...(state.contentData.score?.reasoning
               ? [
                   new Paragraph({
                     children: [new TextRun({ text: "Reasoning:", bold: true })],
@@ -268,6 +263,13 @@ const Content = () => {
   };
 
   console.log("Rendering with state:", state);
+  if (state.contentData) {
+    console.log("Description:", state.contentData.description_suggestions || state.contentData.description_improvements);
+    console.log("Hashtags:", state.contentData.hashtag_suggestions || state.contentData.hashtags);
+    console.log("Improvements:", state.contentData.post_improvement_suggestions || state.contentData.post_improvements);
+    console.log("Score:", state.contentData.score);
+    console.log("Feedback:", state.contentData.overall_feedback);
+  }
 
   return (
     <div className="bg-slate-100 py-20 px-4 sm:px-8">
@@ -491,7 +493,7 @@ const Content = () => {
             </div>
           </div>
           <div className="w-full max-w-sm min-w-[200px] relative mt-4">
-            <label className="text-sm text-slate-600">Content Type</label>
+            <label className="block mb-2 text-sm text-slate-600">Content Type</label>
             <div className="relative">
               <input
                 type="text"
@@ -542,57 +544,58 @@ const Content = () => {
               <div className="mt-6 text-slate-700">
                 <h2 className="text-2xl font-bold text-slate-800 mb-2">Description Suggestions</h2>
                 <p className="text-base mb-2 leading-relaxed">
-                  {(typeof state.contentData.description_suggestions === "object"
-                    ? state.contentData.description_suggestions.suggested_description
-                    : state.contentData.description_suggestions) || "No description provided"}
+                  {(state.contentData.description_suggestions?.suggested_description ||
+                    state.contentData.description_suggestions?.revised_description ||
+                    state.contentData.description_improvements?.suggested_description ||
+                    state.contentData.description_suggestions) ||
+                    "No description provided"}
                 </p>
-                {typeof state.contentData.description_suggestions === "object" &&
-                  state.contentData.description_suggestions.reasoning && (
-                    <p className="text-sm italic text-slate-600 mb-6">
-                      <span className="font-semibold">Reasoning:</span>{" "}
-                      {state.contentData.description_suggestions.reasoning}
-                    </p>
-                  )}
+                {(state.contentData.description_suggestions?.reasoning ||
+                  state.contentData.description_improvements?.reasoning) && (
+                  <p className="text-sm italic text-slate-600 mb-6">
+                    <span className="font-semibold">Reasoning:</span>{" "}
+                    {state.contentData.description_suggestions?.reasoning ||
+                      state.contentData.description_improvements?.reasoning}
+                  </p>
+                )}
 
                 <h2 className="text-2xl font-bold text-slate-800 mb-2">Hashtag Suggestions</h2>
                 <div className="flex flex-wrap gap-2 mb-2">
-                  {(typeof state.contentData.hashtag_suggestions === "object"
-                    ? state.contentData.hashtag_suggestions.suggested_hashtags
-                    : state.contentData.hashtag_suggestions || state.contentData.hashtags) &&
-                  (typeof state.contentData.hashtag_suggestions === "object"
-                    ? state.contentData.hashtag_suggestions.suggested_hashtags
-                    : state.contentData.hashtag_suggestions || state.contentData.hashtags).length > 0 ? (
-                    (typeof state.contentData.hashtag_suggestions === "object"
-                      ? state.contentData.hashtag_suggestions.suggested_hashtags
-                      : state.contentData.hashtag_suggestions || state.contentData.hashtags).map(
-                        (hashtag, index) => (
-                          <span
-                            key={index}
-                            className="inline-block bg-slate-200 text-slate-700 text-sm font-medium py-1 px-2 rounded"
-                          >
-                            {hashtag}
-                          </span>
-                        )
-                      )
-                    ) : (
-                      <p>No hashtags provided</p>
-                    )}
-                </div>
-                {typeof state.contentData.hashtag_suggestions === "object" &&
-                  state.contentData.hashtag_suggestions.reasoning && (
-                    <p className="text-sm italic text-slate-600 mb-6">
-                      <span className="font-semibold">Reasoning:</span>{" "}
-                      {state.contentData.hashtag_suggestions.reasoning}
-                    </p>
+                  {(state.contentData.hashtag_suggestions?.suggested_hashtags ||
+                    state.contentData.hashtag_suggestions ||
+                    state.contentData.hashtags) &&
+                  (state.contentData.hashtag_suggestions?.suggested_hashtags ||
+                    state.contentData.hashtag_suggestions ||
+                    state.contentData.hashtags).length > 0 ? (
+                    (state.contentData.hashtag_suggestions?.suggested_hashtags ||
+                      state.contentData.hashtag_suggestions ||
+                      state.contentData.hashtags).map((hashtag, index) => (
+                      <span
+                        key={index}
+                        className="inline-block bg-slate-200 text-slate-700 text-sm font-medium py-1 px-2 rounded"
+                      >
+                        {hashtag}
+                      </span>
+                    ))
+                  ) : (
+                    <p>No hashtags provided</p>
                   )}
+                </div>
+                {state.contentData.hashtag_suggestions?.reasoning && (
+                  <p className="text-sm italic text-slate-600 mb-6">
+                    <span className="font-semibold">Reasoning:</span>{" "}
+                    {state.contentData.hashtag_suggestions.reasoning}
+                  </p>
+                )}
 
                 <h2 className="text-2xl font-bold text-slate-800 mb-2">Post Improvement Suggestions</h2>
                 <ul className="list-disc pl-5 mb-2 text-base leading-relaxed">
-                  {Array.isArray(state.contentData.post_improvement_suggestions) ? (
-                    state.contentData.post_improvement_suggestions.length > 0 ? (
-                      state.contentData.post_improvement_suggestions.map((item, index) => (
+                  {state.contentData.post_improvement_suggestions?.suggestions &&
+                  Array.isArray(state.contentData.post_improvement_suggestions.suggestions) ? (
+                    state.contentData.post_improvement_suggestions.suggestions.length > 0 ? (
+                      state.contentData.post_improvement_suggestions.suggestions.map((item, index) => (
                         <li key={index} className="mb-4">
-                          {item.improvement}
+                          {item.suggestion || item.improvement || "No suggestion"}
                           {item.reasoning && (
                             <p className="text-sm italic text-slate-600 mt-1">
                               <span className="font-semibold">Reasoning:</span> {item.reasoning}
@@ -603,29 +606,36 @@ const Content = () => {
                     ) : (
                       <li>No suggestions provided</li>
                     )
-                  ) : (typeof state.contentData.post_improvement_suggestions === "object" &&
-                      state.contentData.post_improvement_suggestions.suggestions) ||
-                    state.contentData.post_improvements ||
-                    state.contentData.post_improvement_suggestions ? (
-                    ((typeof state.contentData.post_improvement_suggestions === "object"
-                      ? state.contentData.post_improvement_suggestions.suggestions
-                      : state.contentData.post_improvement_suggestions || state.contentData.post_improvements) || []).map(
-                      (suggestion, index) => (
-                        <li key={index} className="mb-2">{suggestion}</li>
-                      )
+                  ) : Array.isArray(state.contentData.post_improvement_suggestions) ? (
+                    state.contentData.post_improvement_suggestions.length > 0 ? (
+                      state.contentData.post_improvement_suggestions.map((item, index) => (
+                        <li key={index} className="mb-4">
+                          {item.improvement || item.suggestion || "No suggestion"}
+                          {item.reasoning && (
+                            <p className="text-sm italic text-slate-600 mt-1">
+                              <span className="font-semibold">Reasoning:</span> {item.reasoning}
+                            </p>
+                          )}
+                        </li>
+                      ))
+                    ) : (
+                      <li>No suggestions provided</li>
                     )
+                  ) : state.contentData.post_improvements?.image_feedback ||
+                    state.contentData.post_improvements ? (
+                    <li className="mb-4">
+                      {state.contentData.post_improvements.image_feedback || state.contentData.post_improvements}
+                      {state.contentData.post_improvements?.reasoning && (
+                        <p className="text-sm italic text-slate-600 mt-1">
+                          <span className="font-semibold">Reasoning:</span>{" "}
+                          {state.contentData.post_improvements.reasoning}
+                        </p>
+                      )}
+                    </li>
                   ) : (
                     <li>No suggestions provided</li>
                   )}
                 </ul>
-                {typeof state.contentData.post_improvement_suggestions === "object" &&
-                  !Array.isArray(state.contentData.post_improvement_suggestions) &&
-                  state.contentData.post_improvement_suggestions.reasoning && (
-                    <p className="text-sm italic text-slate-600 mb-6">
-                      <span className="font-semibold">Reasoning:</span>{" "}
-                      {state.contentData.post_improvement_suggestions.reasoning}
-                    </p>
-                  )}
 
                 <h2 className="text-2xl font-bold text-slate-800 mb-2">Score</h2>
                 <p className="text-base mb-2">
@@ -636,7 +646,7 @@ const Content = () => {
                   </span>{" "}
                   / 100
                 </p>
-                {typeof state.contentData.score === "object" && state.contentData.score.reasoning && (
+                {state.contentData.score?.reasoning && (
                   <p className="text-sm italic text-slate-600 mb-6">
                     <span className="font-semibold">Reasoning:</span> {state.contentData.score.reasoning}
                   </p>
