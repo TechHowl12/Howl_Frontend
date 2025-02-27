@@ -578,7 +578,7 @@ const Content = () => {
                       </span>
                     ))
                   ) : (
-                    <p>No hashtags provided</p>
+                    <p>{}</p>
                   )}
                 </div>
                 {state.contentData.hashtag_suggestions?.reasoning && (
@@ -604,7 +604,7 @@ const Content = () => {
                         </li>
                       ))
                     ) : (
-                      <li>No suggestions provided</li>
+                      <li>{}</li>
                     )
                   ) : Array.isArray(state.contentData.post_improvement_suggestions) ? (
                     state.contentData.post_improvement_suggestions.length > 0 ? (
@@ -619,7 +619,7 @@ const Content = () => {
                         </li>
                       ))
                     ) : (
-                      <li>No suggestions provided</li>
+                      <li></li>
                     )
                   ) : state.contentData.post_improvements?.image_feedback ||
                     state.contentData.post_improvements ? (
@@ -633,7 +633,7 @@ const Content = () => {
                       )}
                     </li>
                   ) : (
-                    <li>No suggestions provided</li>
+                    <li>{}</li>
                   )}
                 </ul>
 
