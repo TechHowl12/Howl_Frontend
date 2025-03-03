@@ -1,3 +1,4 @@
+
 import axios from "axios";
 import React, { useState } from "react";
 import { ClimbingBoxLoader, ClipLoader } from "react-spinners";
@@ -9,6 +10,7 @@ const Content = () => {
   const [state, setState] = useState({
     loading: false,
     contentData: null,
+    contentType: null, // Track image or video
   });
 
   const [formData, setFormData] = useState({
@@ -60,6 +62,7 @@ const Content = () => {
       const completeData = {
         ...formData,
         post: fileUrl,
+        content_type: resourceType,
       };
 
       const response = await axios.post(
@@ -87,6 +90,7 @@ const Content = () => {
       setState({
         loading: false,
         contentData: parsedData,
+        contentType: resourceType,
       });
     } catch (error) {
       console.error("Error uploading content:", error);
@@ -103,184 +107,159 @@ const Content = () => {
   };
 
   const downloadAsDocx = () => {
-    if (!state.contentData) {
-      alert("No content data available to download");
-      return;
-    }
+  if (!state.contentData) {
+    alert("No content data available to download");
+    return;
+  }
 
-    const doc = new Document({
-      sections: [
-        {
-          properties: {},
-          children: [
-            new Paragraph({
-              children: [new TextRun({ text: "Description Suggestions", bold: true, size: 28 })],
-              spacing: { after: 200 },
-            }),
-            new Paragraph({
-              text:
-                (state.contentData.description_suggestions?.suggested_description ||
-                  state.contentData.description_suggestions?.revised_description ||
-                  state.contentData.description_improvements?.suggested_description ||
-                  state.contentData.description_suggestions) ||
-                "No description provided",
-              spacing: { after: 200 },
-            }),
-            ...(state.contentData.description_suggestions?.reasoning ||
-            state.contentData.description_improvements?.reasoning
-              ? [
-                  new Paragraph({
-                    children: [new TextRun({ text: "Reasoning:", bold: true })],
-                    spacing: { after: 100 },
-                  }),
-                  new Paragraph({
-                    text:
-                      state.contentData.description_suggestions?.reasoning ||
-                      state.contentData.description_improvements?.reasoning,
-                    spacing: { after: 400 },
-                  }),
-                ]
-              : []),
-            new Paragraph({
-              children: [new TextRun({ text: "Hashtag Suggestions", bold: true, size: 28 })],
-              spacing: { after: 200 },
-            }),
-            new Paragraph({
-              text:
-                (state.contentData.hashtag_suggestions?.suggested_hashtags?.join(", ") ||
-                  state.contentData.hashtag_suggestions?.join(", ") ||
-                  state.contentData.hashtags?.join(", ")) ||
-                "No hashtags provided",
-              spacing: { after: 200 },
-            }),
-            ...(state.contentData.hashtag_suggestions?.reasoning
-              ? [
-                  new Paragraph({
-                    children: [new TextRun({ text: "Reasoning:", bold: true })],
-                    spacing: { after: 100 },
-                  }),
-                  new Paragraph({
-                    text: state.contentData.hashtag_suggestions.reasoning,
-                    spacing: { after: 400 },
-                  }),
-                ]
-              : []),
-            new Paragraph({
-              children: [new TextRun({ text: "Post Improvement Suggestions", bold: true, size: 28 })],
-              spacing: { after: 200 },
-            }),
-            ...(state.contentData.post_improvement_suggestions?.suggestions &&
-            Array.isArray(state.contentData.post_improvement_suggestions.suggestions)
-              ? state.contentData.post_improvement_suggestions.suggestions.map((item) => [
-                  new Paragraph({
-                    text: `- ${item.suggestion || item.improvement || "No suggestion"}`,
-                    spacing: { after: 100 },
-                  }),
-                  ...(item.reasoning
-                    ? [
-                        new Paragraph({
-                          text: `Reasoning: ${item.reasoning}`,
-                          spacing: { after: 200 },
-                        }),
-                      ]
-                    : []),
-                ]).flat()
-              : Array.isArray(state.contentData.post_improvement_suggestions)
-              ? state.contentData.post_improvement_suggestions.map((item) => [
-                  new Paragraph({
-                    text: `- ${item.improvement || item.suggestion || "No suggestion"}`,
-                    spacing: { after: 100 },
-                  }),
-                  ...(item.reasoning
-                    ? [
-                        new Paragraph({
-                          text: `Reasoning: ${item.reasoning}`,
-                          spacing: { after: 200 },
-                        }),
-                      ]
-                    : []),
-                ]).flat()
-              : state.contentData.post_improvements?.image_feedback ||
-                state.contentData.post_improvements
-              ? [
-                  new Paragraph({
-                    text: `- ${state.contentData.post_improvements.image_feedback || state.contentData.post_improvements}`,
-                    spacing: { after: 100 },
-                  }),
-                  ...(state.contentData.post_improvements.reasoning
-                    ? [
-                        new Paragraph({
-                          text: `Reasoning: ${state.contentData.post_improvements.reasoning}`,
-                          spacing: { after: 200 },
-                        }),
-                      ]
-                    : []),
-                ]
-              : new Paragraph({ text: "No suggestions provided", spacing: { after: 200 } })),
-            new Paragraph({
-              children: [new TextRun({ text: "Score", bold: true, size: 28 })],
-              spacing: { after: 200 },
-            }),
-            new Paragraph({
-              text: `${state.contentData.score?.value || state.contentData.score || "N/A"} / 100`,
-              spacing: { after: 200 },
-            }),
-            ...(state.contentData.score?.reasoning
-              ? [
-                  new Paragraph({
-                    children: [new TextRun({ text: "Reasoning:", bold: true })],
-                    spacing: { after: 100 },
-                  }),
-                  new Paragraph({
-                    text: state.contentData.score.reasoning,
-                    spacing: { after: 400 },
-                  }),
-                ]
-              : []),
-            ...(state.contentData.overall_feedback
-              ? [
-                  new Paragraph({
-                    children: [new TextRun({ text: "Overall Feedback", bold: true, size: 28 })],
-                    spacing: { after: 200 },
-                  }),
-                  new Paragraph({
-                    text:
-                      (typeof state.contentData.overall_feedback === "object"
-                        ? state.contentData.overall_feedback.text
-                        : state.contentData.overall_feedback) || "No feedback provided",
-                    spacing: { after: 400 },
-                  }),
-                ]
-              : []),
-          ],
-        },
-      ],
-    });
+  const contentTypeLabel = state.contentType === "video" ? "Reel" : "Image";
+  const improvements = state.contentData.post_improvement_suggestions || state.contentData.post_improvements || {};
 
-    Packer.toBlob(doc).then((blob) => {
-      saveAs(blob, "ContentData.docx");
-    });
-  };
+  const doc = new Document({
+    sections: [
+      {
+        properties: {},
+        children: [
+          // Description Suggestions
+          new Paragraph({
+            children: [new TextRun({ text: `${contentTypeLabel} Description Suggestions`, bold: true, size: 28 })],
+            spacing: { after: 200 },
+          }),
+          new Paragraph({
+            text:
+              state.contentData?.suggestions?.description?.suggested_description ||
+              state.contentData?.suggestions?.description?.revised_description ||
+              state.contentData?.suggestions?.description?.improved_description ||
+              state.contentData.description_suggestions ||
+              `No description suggestions provided for this ${state.contentType || "content"}`,
+            spacing: { after: 200 },
+          }),
+          ...(state.contentData?.suggestions?.description?.reasoning
+            ? [
+                new Paragraph({ children: [new TextRun({ text: "Reasoning:", bold: true })], spacing: { after: 100 } }),
+                new Paragraph({
+                  text: state.contentData.suggestions.description.reasoning,
+                  spacing: { after: 400 },
+                }),
+              ]
+            : []),
+
+          // Hashtag Suggestions
+          new Paragraph({
+            children: [new TextRun({ text: `${contentTypeLabel} Hashtag Suggestions`, bold: true, size: 28 })],
+            spacing: { after: 200 },
+          }),
+          new Paragraph({
+            text:
+              Array.isArray(state.contentData?.suggestions?.hashtags?.suggested_hashtags)
+                ? state.contentData.suggestions.hashtags.suggested_hashtags.join(", ")
+                : typeof state.contentData?.suggestions?.hashtags?.suggested_hashtags === "string"
+                ? state.contentData.suggestions.hashtags.suggested_hashtags
+                : `No hashtag suggestions provided for this ${state.contentType || "content"}`,
+            spacing: { after: 200 },
+          }),
+          ...(state.contentData?.suggestions?.hashtags?.reasoning
+            ? [
+                new Paragraph({ children: [new TextRun({ text: "Reasoning:", bold: true })], spacing: { after: 100 } }),
+                new Paragraph({
+                  text: state.contentData.suggestions.hashtags.reasoning,
+                  spacing: { after: 400 },
+                }),
+              ]
+            : []),
+
+          // Improvement Suggestions
+          new Paragraph({
+            children: [new TextRun({ text: `${contentTypeLabel} Improvement Suggestions`, bold: true, size: 28 })],
+            spacing: { after: 200 },
+          }),
+          ...(Array.isArray(state.contentData?.suggestions?.post_improvements?.suggested_changes)
+            ? state.contentData.suggestions.post_improvements.suggested_changes.map((item) => [
+                new Paragraph({
+                  text: `- ${item.element ? `${item.element}: ${item.change}` : item.change || item.improvement || item.suggestion || "No suggestion"}`,
+                  spacing: { after: 100 },
+                }),
+                ...(item.reasoning
+                  ? [new Paragraph({ text: `Reasoning: ${item.reasoning}`, spacing: { after: 200 } })]
+                  : []),
+              ]).flat()
+            : improvements.image_feedback || improvements.suggestion || improvements.improvement
+            ? [
+                new Paragraph({
+                  text: `- ${improvements.image_feedback || (improvements.element ? `${improvements.element}: ${improvements.suggestion}` : improvements.suggestion || improvements.improvement || "No suggestion")}`,
+                  spacing: { after: 100 },
+                }),
+                ...(improvements.reasoning
+                  ? [new Paragraph({ text: `Reasoning: ${improvements.reasoning}`, spacing: { after: 200 } })]
+                  : []),
+              ]
+            : [
+                new Paragraph({
+                  text: `No improvement suggestions provided for this ${state.contentType || "content"}`,
+                  spacing: { after: 200 },
+                }),
+              ]),
+
+          // Score
+          new Paragraph({
+            children: [new TextRun({ text: `${contentTypeLabel} Score`, bold: true, size: 28 })],
+            spacing: { after: 200 },
+          }),
+          new Paragraph({
+            text: `${state.contentData?.suggestions?.score?.value || state.contentData?.suggestions?.score || "N/A"} / 100`,
+            spacing: { after: 200 },
+          }),
+          ...(state.contentData?.suggestions?.score?.reasoning
+            ? [
+                new Paragraph({ children: [new TextRun({ text: "Reasoning:", bold: true })], spacing: { after: 100 } }),
+                new Paragraph({ text: state.contentData?.suggestions?.score?.reasoning, spacing: { after: 400 } }),
+              ]
+            : []),
+
+          // Overall Feedback
+          ...(state.contentData?.overall_feedback
+            ? [
+                new Paragraph({
+                  children: [new TextRun({ text: `Overall ${contentTypeLabel} Feedback`, bold: true, size: 28 })],
+                  spacing: { after: 200 },
+                }),
+                new Paragraph({
+                  text:
+                    typeof state.contentData.overall_feedback === "object"
+                      ? state.contentData.overall_feedback.text
+                      : state.contentData.overall_feedback || "No feedback provided",
+                  spacing: { after: 400 },
+                }),
+              ]
+            : []),
+        ],
+      },
+    ],
+  });
+
+  Packer.toBlob(doc).then((blob) => {
+    saveAs(blob, `ContentData_${state.contentType || "unknown"}.docx`);
+  });
+};
+
 
   console.log("Rendering with state:", state);
-  if (state.contentData) {
-    console.log("Description:", state.contentData.description_suggestions || state.contentData.description_improvements);
-    console.log("Hashtags:", state.contentData.hashtag_suggestions || state.contentData.hashtags);
-    console.log("Improvements:", state.contentData.post_improvement_suggestions || state.contentData.post_improvements);
-    console.log("Score:", state.contentData.score);
-    console.log("Feedback:", state.contentData.overall_feedback);
-  }
+  console.log("post_improvement_suggestions:", state.contentData?.post_improvement_suggestions);
 
   return (
     <div className="bg-slate-100 py-20 px-4 sm:px-8">
-      <h1 className="text-4xl text-center mb-6 mt-2 uppercase font-bold text-slate-800">Content</h1>
+      <h1 className="text-4xl text-center mb-6 mt-2 uppercase font-bold text-slate-700">
+        Content
+      </h1>
       <div className="flex flex-col xl:flex-row">
         <div className="xl:border-r-2 w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 max-sm:gap-7 items-center xl:w-1/3 h-full border-slate-700">
           <input
             type="file"
             onChange={handleFileChange}
+            accept="image/*,video/*"
             className="block w-full text-gray-500 font-medium text-sm bg-gray-100 file:cursor-pointer cursor-pointer file:border-0 file:py-2 file:px-4 file:mr-4 file:bg-gray-800 file:hover:bg-gray-700 file:text-slate-100 file:rounded mt-4"
           />
+
           <div className="w-full max-w-sm min-w-[200px] relative mt-4">
             <label className="block mb-2 text-sm text-slate-600">Brand</label>
             <div className="relative">
@@ -539,133 +518,92 @@ const Content = () => {
                 onClick={downloadAsDocx}
                 className="mt-4 rounded-md flex justify-center ml-auto bg-blue-500 py-2 px-4 border border-transparent text-center text-sm text-white transition-all hover:bg-blue-600"
               >
-                Download
+                Download {state.contentType === "video" ? "Reel" : "Image"} Report
               </button>
               <div className="mt-6 text-slate-700">
-                <h2 className="text-2xl font-bold text-slate-800 mb-2">Description Suggestions</h2>
+                <h2 className="text-2xl font-bold text-slate-800 mb-2">
+                  {state.contentType === "video" ? "Reel" : "Image"} Description Suggestions
+                </h2>
                 <p className="text-base mb-2 leading-relaxed">
-                  {(state.contentData.description_suggestions?.suggested_description ||
-                    state.contentData.description_suggestions?.revised_description ||
-                    state.contentData.description_improvements?.suggested_description ||
+                  {(state.contentData?.suggestions?.description?.suggested_description ||
+                    state.contentData?.suggestions?.description?.revised_description ||
+                    state.contentData?.suggestions?.description?.revised_caption ||
+                    state.contentData?.suggestions?.description?.improved_description||
+                    state.contentData?.suggestions?.description?.improved_caption ||
+                    state.contentData?.suggestions?.description?.suggested_caption ||
                     state.contentData.description_suggestions) ||
-                    "No description provided"}
+                    state.contentData?.suggestions?.description?.revised_caption ||
+                    `No description suggestions provided for this ${state.contentType || "content"}`}
                 </p>
-                {(state.contentData.description_suggestions?.reasoning ||
-                  state.contentData.description_improvements?.reasoning) && (
+                {(state.contentData?.suggestions?.description?.reasoning ||
+                  state.contentData?.improvements?.description?.reasoning) && (
                   <p className="text-sm italic text-slate-600 mb-6">
                     <span className="font-semibold">Reasoning:</span>{" "}
-                    {state.contentData.description_suggestions?.reasoning ||
-                      state.contentData.description_improvements?.reasoning}
+                    {state.contentData?.suggestions?.description?.reasoning ||
+                      state.contentData?.improvements?.description?.suggested_caption}
                   </p>
                 )}
 
-                <h2 className="text-2xl font-bold text-slate-800 mb-2">Hashtag Suggestions</h2>
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {(state.contentData.hashtag_suggestions?.suggested_hashtags ||
-                    state.contentData.hashtag_suggestions ||
-                    state.contentData.hashtags) &&
-                  (state.contentData.hashtag_suggestions?.suggested_hashtags ||
-                    state.contentData.hashtag_suggestions ||
-                    state.contentData.hashtags).length > 0 ? (
-                    (state.contentData.hashtag_suggestions?.suggested_hashtags ||
-                      state.contentData.hashtag_suggestions ||
-                      state.contentData.hashtags).map((hashtag, index) => (
-                      <span
-                        key={index}
-                        className="inline-block bg-slate-200 text-slate-700 text-sm font-medium py-1 px-2 rounded"
-                      >
-                        {hashtag}
-                      </span>
-                    ))
-                  ) : (
-                    <p>{}</p>
-                  )}
-                </div>
-                {state.contentData.hashtag_suggestions?.reasoning && (
+                <h2 className="text-2xl font-bold text-slate-800 mb-2">
+                  {state.contentType === "video" ? "Reel" : "Image"} Hashtag Suggestions
+                </h2>
+                <p className="text-base mb-2 leading-relaxed">
+                  {(state.contentData?.suggestions?.hashtags?.added_hashtags||
+                    state.contentData?.suggestions?.hashtags?.improved_hashtags ||
+                    state.contentData?.suggestions?.hashtags?.suggested_hashtags ||
+                    state.contentData.hashtag_suggestions) ||
+                    state.contentData?.suggestions?.description?.revised_hashtags ||
+                    state.contentData?.suggestions?.description?.refined_hashtags ||
+                    `No hashtag suggestions provided for this ${state.contentType || "content"}`}
+                </p>
+                {state.contentData?.suggestions?.hashtags?.reasoning && (
                   <p className="text-sm italic text-slate-600 mb-6">
                     <span className="font-semibold">Reasoning:</span>{" "}
-                    {state.contentData.hashtag_suggestions.reasoning}
+                    {state.contentData?.suggestions?.hashtags?.reasoning}
                   </p>
                 )}
 
-                <h2 className="text-2xl font-bold text-slate-800 mb-2">Post Improvement Suggestions</h2>
+                <h2 className="text-2xl font-bold text-slate-800 mb-2">
+                  {state.contentType === "video" ? "Reel" : "Image"} Improvement Suggestions
+                </h2>
                 <ul className="list-disc pl-5 mb-2 text-base leading-relaxed">
-                  {state.contentData.post_improvement_suggestions?.suggestions &&
-                  Array.isArray(state.contentData.post_improvement_suggestions.suggestions) ? (
-                    state.contentData.post_improvement_suggestions.suggestions.length > 0 ? (
-                      state.contentData.post_improvement_suggestions.suggestions.map((item, index) => (
-                        <li key={index} className="mb-4">
-                          {item.suggestion || item.improvement || "No suggestion"}
-                          {item.reasoning && (
-                            <p className="text-sm italic text-slate-600 mt-1">
-                              <span className="font-semibold">Reasoning:</span> {item.reasoning}
-                            </p>
-                          )}
-                        </li>
-                      ))
-                    ) : (
-                      <li>{}</li>
-                    )
-                  ) : Array.isArray(state.contentData.post_improvement_suggestions) ? (
-                    state.contentData.post_improvement_suggestions.length > 0 ? (
-                      state.contentData.post_improvement_suggestions.map((item, index) => (
-                        <li key={index} className="mb-4">
-                          {item.improvement || item.suggestion || "No suggestion"}
-                          {item.reasoning && (
-                            <p className="text-sm italic text-slate-600 mt-1">
-                              <span className="font-semibold">Reasoning:</span> {item.reasoning}
-                            </p>
-                          )}
-                        </li>
-                      ))
-                    ) : (
-                      <li></li>
-                    )
-                  ) : state.contentData.post_improvements?.image_feedback ||
-                    state.contentData.post_improvements ? (
-                    <li className="mb-4">
-                      {state.contentData.post_improvements.image_feedback || state.contentData.post_improvements}
-                      {state.contentData.post_improvements?.reasoning && (
+                {state.contentData?.suggestions?.post_improvements?.suggested_changes?.length > 0 ? (
+                  state.contentData.suggestions.post_improvements.suggested_changes.map((item, index) => (
+                    <li key={index} className="mb-4">
+                      <p>{item.change}</p>
+                      {item.reasoning && (
                         <p className="text-sm italic text-slate-600 mt-1">
-                          <span className="font-semibold">Reasoning:</span>{" "}
-                          {state.contentData.post_improvements.reasoning}
+                          <span className="font-semibold">Reasoning:</span> {item.reasoning}
                         </p>
                       )}
                     </li>
-                  ) : (
-                    <li>{}</li>
-                  )}
+                  ))
+                ) : (
+                  <li>No improvement suggestions provided for this {state.contentData?.content_type || "content"}.</li>
+                )}
                 </ul>
 
-                <h2 className="text-2xl font-bold text-slate-800 mb-2">Score</h2>
+                <h2 className="text-2xl font-bold text-slate-800 mb-2">
+                  {state.contentType === "video" ? "Reel" : "Image"} Score
+                </h2>
+
                 <p className="text-base mb-2">
                   <span className="font-semibold">
-                    {(typeof state.contentData.score === "object"
-                      ? state.contentData.score.value
-                      : state.contentData.score) || "N/A"}
+                    {state.contentData?.suggestions?.score?.value ?? "N/A"}
                   </span>{" "}
                   / 100
                 </p>
-                {state.contentData.score?.reasoning && (
+
+                {state.contentData?.suggestions?.score?.reasoning && (
                   <p className="text-sm italic text-slate-600 mb-6">
-                    <span className="font-semibold">Reasoning:</span> {state.contentData.score.reasoning}
+                    <span className="font-semibold">Reasoning:</span> {state.contentData.suggestions.score.reasoning}
                   </p>
                 )}
 
-                {state.contentData.overall_feedback && (
-                  <>
-                    <h2 className="text-2xl font-bold text-slate-800 mb-2">Overall Feedback</h2>
-                    <p className="text-base mb-6 leading-relaxed">
-                      {(typeof state.contentData.overall_feedback === "object"
-                        ? state.contentData.overall_feedback.text
-                        : state.contentData.overall_feedback) || "No feedback provided"}
-                    </p>
-                  </>
-                )}
               </div>
             </div>
           ) : (
-            <h1 className="text-xl font-bold text-center">Fill up all the fields</h1>
+            <h1 className="text-xl font-bold">Fill up all the fields</h1>
           )}
         </div>
       </div>

@@ -8,6 +8,7 @@ const Feedback = () => {
   const [state, setState] = useState({
     loading: false,
     feedbackData: null,
+    successMessage: "", // New state for success message
   });
 
   const [formData, setFormData] = useState({
@@ -33,9 +34,11 @@ const Feedback = () => {
     }
 
     try {
-      setState((prev) => ({ ...prev, loading: true }));
+      setState((prev) => ({ ...prev, loading: true, successMessage: "" }));
+      
+      
       const response = await axios.post(
-        "https://howl-performanceapi.onrender.com/feedback", // Adjust URL as needed
+        "https://howl-performanceapi.onrender.com/feedback",
         formData,
         {
           headers: {
@@ -43,27 +46,24 @@ const Feedback = () => {
           },
         }
       );
+      
+      // Simulated response
+      const simulatedResponse = {
+        data: formData // Simply return the formData as the response for testing
+      };
 
-      console.log("Raw server response:", response.data);
-      let parsedData = response.data;
-      if (typeof response.data === "string") {
-        try {
-          parsedData = JSON.parse(response.data.replace(/```json\n|\n```/g, "").trim());
-        } catch (error) {
-          console.error("Failed to parse response.data as JSON:", error);
-          parsedData = {};
-        }
-      }
-      console.log("Parsed feedbackData:", parsedData);
+      setTimeout(() => { // Add a slight delay to mimic API call
+        setState({
+          loading: false,
+          feedbackData: simulatedResponse.data,
+          successMessage: "Feedback submitted successfully", // Set success message
+        });
+      }, 1000);
 
-      setState({
-        loading: false,
-        feedbackData: parsedData,
-      });
     } catch (error) {
       console.error("Error submitting feedback:", error);
       alert("Failed to submit feedback. Please try again.");
-      setState((prev) => ({ ...prev, loading: false }));
+      setState((prev) => ({ ...prev, loading: false, successMessage: "" }));
     }
   };
 
@@ -305,6 +305,12 @@ const Feedback = () => {
             <ClimbingBoxLoader size={40} color="#5d5d5d" />
           ) : state.feedbackData ? (
             <div className="w-full max-w-2xl">
+              {/* Success message display */}
+              {state.successMessage && (
+                <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md">
+                  {state.successMessage}
+                </div>
+              )}
               <button
                 onClick={downloadAsDocx}
                 className="mt-4 rounded-md flex justify-center ml-auto bg-blue-500 py-2 px-4 border border-transparent text-center text-sm text-white transition-all hover:bg-blue-600"

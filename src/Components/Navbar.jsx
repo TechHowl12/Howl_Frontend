@@ -62,6 +62,7 @@ const Navbar = () => {
           <ul onClick={toggleMenu} className="space-y-4 cursor-pointer flex flex-col">
             <Link to='/' className="text-2xl text-slate-700">Content</Link>
             <Link to='/relation' className="text-2xl text-slate-700">Performance</Link>
+            <Link to='/feedback' className="text-2xl text-slate-700">Feedback</Link>
           </ul>
         </div>
       </div>
