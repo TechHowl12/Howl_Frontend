@@ -134,23 +134,25 @@ export const Hero = () => {
         </div>
       </div>
 
-      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 flex flex-col items-center">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          className="w-6 h-6 text-white animate-bounce"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
-        <p className="text-white text-xl mt-2 font-light tracking-wider">Ready to begin your hunt?</p>
-      </div>
+      <div className="absolute bottom-[clamp(2rem,5vw,6rem)] left-1/2 transform -translate-x-1/2 z-20 flex flex-col items-center">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    className="w-[clamp(1rem,1.5vw,2rem)] h-[clamp(1rem,1.5vw,2rem)] min-w-[20px] min-h-[20px] text-white animate-bounce"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M19 9l-7 7-7-7"
+    />
+  </svg>
+  <p className="text-white text-[clamp(0.875rem,1.2vw,1.75rem)] mt-[clamp(0.25rem,0.5vw,0.75rem)] font-light tracking-wider">
+    Ready to begin your hunt?
+  </p>
+</div>
 
       <style jsx>{`
         .shiny-text {

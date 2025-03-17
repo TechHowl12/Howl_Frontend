@@ -51,7 +51,7 @@ const Feedback = () => {
         console.error("Error parsing content analysis results:", error);
       }
     }
-  }, []);
+  }, []); 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -181,7 +181,7 @@ const Feedback = () => {
                     name="name"
                     placeholder="Enter your name"
                     onChange={handleInputChange}
-                    value={formData.name}
+                    // value={formData.name}
                     required
                   />
                   <div className="absolute left-1 top-1 rounded bg-brand-primary p-1.5 text-white">

@@ -4,15 +4,15 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  // const [scrolled, setScrolled] = useState(false);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
-  const Refresh = () => {
-    window.location.reload();
-  };
+  // const Refresh = () => {
+  //   window.location.reload();
+  // };
 
   // Add scroll effect
   // useEffect(() => {
@@ -31,36 +31,35 @@ const Navbar = () => {
   // }, []);
 
   // State to manage header visibility based on scroll
-  const [isVisible, setIsVisible] = useState(true);
+  // const [isVisible, setIsVisible] = useState(true);
   
   // State to track the last scroll position
-  const [lastScrollY, setLastScrollY] = useState(0);
+  // const [lastScrollY, setLastScrollY] = useState(0);
   
   // State to track which link is currently hovered
-  const [hoveredLink, setHoveredLink] = useState(null);
+  // const [hoveredLink, setHoveredLink] = useState(null);
 
   // Effect to handle header visibility on scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > lastScrollY) {
-        setIsVisible(false); // Hide header on scroll down
-      } else {
-        setIsVisible(true); // Show header on scroll up
-      }
-      setLastScrollY(window.scrollY);
-    };
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     if (window.scrollY > lastScrollY) {
+  //       setIsVisible(false); // Hide header on scroll down
+  //     } else {
+  //       setIsVisible(true); // Show header on scroll up
+  //     }
+  //     setLastScrollY(window.scrollY);
+  //   };
 
-    window.addEventListener("scroll", handleScroll);
+  //   window.addEventListener("scroll", handleScroll);
     
-    // Cleanup on component unmount
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  //   // Cleanup on component unmount
+  //   return () => window.removeEventListener("scroll", handleScroll);
+  // }, [lastScrollY]);
 
   return (
     <>
       {/* Navbar */}
-      <nav className={`bg-transparent fixed pt-6 px-2 sm:pt-6 xl:pt-10 top-0 left-0 w-full z-50 transition-transform duration-300 ${
-          isVisible ? "translate-y-0" : "-translate-y-full"
+      <nav className={`bg-transparent xl:mb-[-30px] absolute pt-6 px-2 sm:pt-6 xl:pt-10 top-0 left-0 w-full z-50 transition-transform duration-300 
         }`}>
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center px-4 sm:px-6 lg:px-8 py-4">
