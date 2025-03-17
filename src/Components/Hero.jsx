@@ -159,13 +159,13 @@ export const Hero = () => {
           color: white;
           background: linear-gradient(
             to right,
-            #ffffff 0%,
-            #3D155D 20%,
-            #8E24AA 40%,
+            #fffefd 0%,
+            #f6f6f6 19%,
+            #ffffff 40%,
             #ffffff 50%,
-            #8E24AA 60%,
-            #3D155D 80%,
-            #ffffff 100%
+            #ffffff 60%,
+            #fffefd 80%,
+            #ffffff 200%
           );
           -webkit-background-clip: text;
           background-clip: text;

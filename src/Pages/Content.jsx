@@ -1,8 +1,53 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ClipLoader } from "react-spinners";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import { saveAs } from "file-saver";
+
+const AnimatedScore = ({ score }) => {
+  const [count, setCount] = useState(0);
+  const countRef = useRef(null);
+
+  useEffect(() => {
+    if (score === "N/A" || !score) {
+      setCount("N/A");
+      return;
+    }
+
+    const endNum = parseInt(score);
+    if (isNaN(endNum)) {
+      setCount(score);
+      return;
+    }
+
+    const startTime = Date.now();
+    const duration = 2000;
+    const endTime = startTime + duration;
+
+    const updateCount = () => {
+      const now = Date.now();
+      const progress = Math.min(1, (now - startTime) / duration);
+      const currentCount = Math.floor(endNum * progress);
+
+      if (now <= endTime) {
+        setCount(currentCount);
+        countRef.current = requestAnimationFrame(updateCount);
+      } else {
+        setCount(endNum);
+      }
+    };
+
+    countRef.current = requestAnimationFrame(updateCount);
+
+    return () => {
+      if (countRef.current) {
+        cancelAnimationFrame(countRef.current);
+      }
+    };
+  }, [score]);
+
+  return count;
+};
 
 const Content = () => {
   const [file, setFile] = useState(null);
@@ -212,7 +257,12 @@ const Content = () => {
             }),
             new Paragraph({
               children: [
-                new TextRun({ text: `${state.contentData?.suggestions?.score?.value || state.contentData?.suggestions?.score || "N/A"}`, bold: true, size: 24 }),
+                new TextRun({ 
+                  text: `${state.contentData?.suggestions?.score?.value || 
+                   state.contentData?.suggestions?.score || "N/A"}`,
+                  bold: true,
+                  size: 24 
+                }),
                 new TextRun({ text: " / 100", size: 24 })
               ],
               spacing: { after: 200 },
@@ -616,7 +666,7 @@ const Content = () => {
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
                     {/* Score Card */}
                     <div className="bg-brand-background rounded-lg p-8 shadow-sm">
                       <h4 className="text-lg font-semibold text-brand-primary mb-4 flex items-center">
@@ -627,8 +677,10 @@ const Content = () => {
                       </h4>
                       <div className="flex items-end mb-6">
                         <span className="text-6xl font-bold text-brand-primary">
-                          {state.contentData?.suggestions?.score?.value || 
-                           state.contentData?.suggestions?.score || "N/A"}
+                          <AnimatedScore 
+                            score={state.contentData?.suggestions?.score?.value || 
+                            state.contentData?.suggestions?.score || "N/A"}
+                          />
                         </span>
                         <span className="ml-2 text-xl text-gray-500 mb-2">/100</span>
                       </div>
