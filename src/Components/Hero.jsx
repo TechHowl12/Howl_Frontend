@@ -134,13 +134,13 @@ export const Hero = () => {
         </div>
       </div>
 
-      <div className="absolute bottom-[clamp(3rem,6rem,6rem)] left-1/2 transform -translate-x-1/2 z-20 flex flex-col items-center specific-laptop-mt">
+      <div className="z-20 flex items-center flex-col justify-center">
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
-    className="w-[clamp(1rem,1.5vw,2rem)] h-[clamp(1rem,1.5vw,2rem)] mt-20 min-w-[20px] min-h-[20px] text-white animate-bounce"
+    className="w-[clamp(1rem,1.5vw,2rem)] h-[clamp(1rem,1.5vw,2rem)] min-w-[20px] min-h-[20px] mt-16 text-white animate-bounce"
   >
     <path
       strokeLinecap="round"
@@ -149,7 +149,7 @@ export const Hero = () => {
       d="M19 9l-7 7-7-7"
     />
   </svg>
-  <p className="text-white text-[clamp(0.875rem,1.2vw,1.75rem)] mt-[clamp(0.25rem,0.5vw,0.75rem)] font-light tracking-wider">
+  <p className="text-white text-[clamp(0.875rem,1.2vw,1.75rem)] font-light tracking-wider">
     Ready to begin your hunt?
   </p>
 </div>
