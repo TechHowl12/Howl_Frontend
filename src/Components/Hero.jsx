@@ -134,7 +134,7 @@ export const Hero = () => {
         </div>
       </div>
 
-      <div className="absolute bottom-[clamp(2rem,5vw,6rem)] left-1/2 transform -translate-x-1/2 z-20 flex flex-col items-center">
+      <div className="absolute bottom-[clamp(2rem,5vw,6rem)] left-1/2 transform -translate-x-1/2 z-20 flex flex-col items-center specific-laptop-mt">
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
@@ -153,6 +153,14 @@ export const Hero = () => {
     Ready to begin your hunt?
   </p>
 </div>
+
+<style jsx>{`
+  @media (width: 1280px) and (height: 760px) {
+    .specific-laptop-mt {
+      margin-top: 20px;
+    }
+  }
+`}</style>
 
       <style jsx>{`
         .shiny-text {

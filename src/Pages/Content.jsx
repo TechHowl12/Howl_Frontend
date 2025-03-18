@@ -381,7 +381,7 @@ const Content = () => {
   console.log("post_improvement_suggestions:", state.contentData?.post_improvement_suggestions);
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen ">
       <div className="container mx-auto px-4 py-8">
         <div className="bg-white rounded-xl shadow-lg p-6 md:p-8 animate-slideUp">
           <h2 className="text-2xl md:text-3xl font-bold mb-6 text-brand-primary border-b pb-4">Upload Content for Analysis</h2>
@@ -441,7 +441,7 @@ const Content = () => {
                     type="text"
                     className="form-input"
                     name="campaign_type"
-                    placeholder="Enter Campaign Type"
+                    placeholder="Enter Campaign Objective"
                     onChange={handleInputChange}
                     value={formData.campaign_type}
                   />
@@ -465,7 +465,7 @@ const Content = () => {
                     type="text"
                     className="form-input"
                     name="objective"
-                    placeholder="Enter Objective"
+                    placeholder="Explain the objective in detail"
                     onChange={handleInputChange}
                     value={formData.objective}
                   />
