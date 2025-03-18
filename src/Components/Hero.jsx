@@ -134,13 +134,13 @@ export const Hero = () => {
         </div>
       </div>
 
-      <div className="absolute bottom-[clamp(2rem,5vw,6rem)] left-1/2 transform -translate-x-1/2 z-20 flex flex-col items-center specific-laptop-mt">
+      <div className="absolute bottom-[clamp(3rem,6rem,6rem)] left-1/2 transform -translate-x-1/2 z-20 flex flex-col items-center specific-laptop-mt">
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
-    className="w-[clamp(1rem,1.5vw,2rem)] h-[clamp(1rem,1.5vw,2rem)] min-w-[20px] min-h-[20px] text-white animate-bounce"
+    className="w-[clamp(1rem,1.5vw,2rem)] h-[clamp(1rem,1.5vw,2rem)] mt-20 min-w-[20px] min-h-[20px] text-white animate-bounce"
   >
     <path
       strokeLinecap="round"
