@@ -73,11 +73,11 @@ export const Hero = () => {
       <div className="absolute inset-0 bg-black bg-opacity-50 z-0"></div>
 
       {/* Desktop View */}
-      <div className="relative xl:text-[3.5rem] z-10 hidden sm:block text-white leading-none">
+      <div className="relative xl:text-[2.5rem] z-10 hidden mt-20 sm:block text-white leading-none">
         <h1
           data-scroll
           data-scroll-speed=".2"
-          className="text-[4vw] reg overflow-hidden text-white"
+          className="text-[4vw] xl:text-[2.5] reg overflow-hidden text-white"
         >
           {splitWords("Tear  Into")}
         </h1>
