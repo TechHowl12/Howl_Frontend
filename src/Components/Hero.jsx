@@ -73,7 +73,7 @@ export const Hero = () => {
       <div className="absolute inset-0 bg-black bg-opacity-50 z-0"></div>
 
       {/* Desktop View */}
-      <div className="relative z-10 hidden sm:block text-white leading-none">
+      <div className="relative xl:text-[3.5rem] z-10 hidden sm:block text-white leading-none">
         <h1
           data-scroll
           data-scroll-speed=".2"
