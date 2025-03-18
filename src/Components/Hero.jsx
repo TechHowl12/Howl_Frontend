@@ -155,7 +155,7 @@ export const Hero = () => {
 </div>
 
 <style jsx>{`
-  @media (width: 1280px) and (height: 760px) {
+  @media (width: 1280px) and (height: 585px) {
     .specific-laptop-mt {
       margin-top: 20px;
     }
